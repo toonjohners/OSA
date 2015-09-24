@@ -1,0 +1,20 @@
+---
+users:
+  - name: jmccormack
+    gecos: John McCormack
+    password: "$6$oUdpYKyBT7HW6wkT$F52V359cnPi0KMjHARBgkRaTmbKXHkomHj4zPTdSNq\
+               jF23k11bLJRJV.C/lR916I64vjlIbnVRd4ulmghr/pb0"
+    forward: jmccormack@openet.com
+
+root_mail_forward: jmccormack
+
+packages_to_install:
+  - httpd
+  - nc
+  - monit
+  - net-snmp
+
+services_to_enable:
+  - httpd
+  - snmpd
+  - ntpd

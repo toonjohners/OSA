@@ -1,0 +1,17 @@
+---
+users:
+  - name: omns
+    gecos: OpenNms
+    password: "$6$oUdpYKyBT7HW6wkT$F52V359cnPi0KMjHARBgkRaTmbKXHkomHj4zPTdSNq\
+               jF23k11bLJRJV.C/lR916I64vjlIbnVRd4ulmghr/pb0"
+    forward: jmccormack@openet.com
+
+root_mail_forward: omns
+
+packages_to_install:
+  - net-snmp-libs
+  - net-snmp-utils
+  - opennms
+
+
+services_to_enable:

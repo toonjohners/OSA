@@ -1,0 +1,28 @@
+---
+- name: create EnvEng users
+  user:
+    name: '{{item.name}}'
+    comment: '{{item.gecos}}'
+    password: '{{item.password|default("*")}}'
+    groups: wheel
+    state: present
+    append: yes
+  with_items: users
+
+- name: install packages
+  yum:
+    name: '{{item}}'
+    state: present
+  with_items: packages_to_install
+
+- name: Upload default snmpd.conf for host
+  copy: src=snmpd.conf dest=/etc/snmp/ mode=0644
+  ignore_errors: True
+  notify:
+    - start snmpd
+
+
+- name: enable services
+  service: name={{item}} enabled=yes
+  with_items: services_to_enable
+
