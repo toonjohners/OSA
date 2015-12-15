@@ -1,0 +1,107 @@
+---
+
+### Site Specific Information below this line: ###
+##################################################
+
+mirror_base: 10.0.26.179/mirror
+kickstart_host: 10.0.102.102
+
+
+kickstart_file:
+    - name: app2
+      network:
+           device: eth0
+           ip: 10.0.102.123
+           netmask: 255.255.0.0 
+           gateway: 10.0.0.50
+           hostname: app2
+
+           device1: eth1
+           ip1: 172.0.102.123
+           netmask1: 255.255.0.0
+           gateway1: 172.0.102.123
+
+           device2: eth2
+           ip2: 172.0.2.123
+           netmask2: 255.255.0.0
+           gateway2: 172.0.2.123
+
+      user:
+           name: ansible
+           gecos: Ansible user
+           password: $6$1i0MLI/A$xXsHHTGU2ExrATgrpJN2Jl6X6FEFHne2ra8cEVDcXlp3qcquJdtp9fG69lRAB/eecN9XKtgWjGqWil32WfYtF.
+           ssh_key: ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAtKSwN/bKS5uia1FdtWyC3MELqYe24bB/vGclQl104j8YoQ6fjrwQ9oxHzJwDNp/0CeJafUFUI9171/jqH6CdDJsgic419QGuGfwCFK5J8XQYO+wSWy7DcYPkz2gN1tgSXKPhHP0JtcCmz/OR1OEvCRKLyr62K+M5EjOaRQ72iZVbRhYASK8vTTQkWvkLPzAcsfkRsOWeHC/6rNqz+5IOAhq3miXlAfp+I1WadnTkTmOr1iswbwGZajK9BTpAE142cMnDttJxAflf/gkgkkXYpgG0iyKKOiIwD8tSOzDy9npVY6Im4AFciO/Pj9hq4oEqE+EYCEUbiLq7x3NRCB3gBw== ansible@osa_demo.openet-dublin
+
+    - name: volt2
+      network:
+           device: eth0
+           ip: 10.0.102.123
+           netmask: 255.255.0.0
+           gateway: 10.0.0.50
+           hostname: volt2
+
+           device1: eth1
+           ip1: 172.0.102.124
+           netmask1: 255.255.0.0
+           gateway1: 172.0.102.124
+
+           device2: eth2
+           ip2: 172.0.2.124
+           netmask2: 255.255.0.0
+           gateway2: 172.0.2.124
+
+      user:
+           name: ansible
+           gecos: Ansible user
+           password: $6$1i0MLI/A$xXsHHTGU2ExrATgrpJN2Jl6X6FEFHne2ra8cEVDcXlp3qcquJdtp9fG69lRAB/eecN9XKtgWjGqWil32WfYtF.
+           ssh_key: ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAtKSwN/bKS5uia1FdtWyC3MELqYe24bB/vGclQl104j8YoQ6fjrwQ9oxHzJwDNp/0CeJafUFUI9171/jqH6CdDJsgic419QGuGfwCFK5J8XQYO+wSWy7DcYPkz2gN1tgSXKPhHP0JtcCmz/OR1OEvCRKLyr62K+M5EjOaRQ72iZVbRhYASK8vTTQkWvkLPzAcsfkRsOWeHC/6rNqz+5IOAhq3miXlAfp+I1WadnTkTmOr1iswbwGZajK9BTpAE142cMnDttJxAflf/gkgkkXYpgG0iyKKOiIwD8tSOzDy9npVY6Im4AFciO/Pj9hq4oEqE+EYCEUbiLq7x3NRCB3gBw== ansible@osa_demo.openet-dublin
+
+guests:
+    - name: app2
+      url: http://{{ mirror_base }}/isos/rhel-server-6.6-x86_64-dvd
+      ks: http://{{ kickstart_host }}/kickstartapp2.cfg
+      description: nms
+      cpu: 2
+      mem: 2048
+      virt_type: kvm
+      virt_hypervisor: hvm
+      os:
+          type: linux
+          variant: rhel6
+      disk:
+          size: 20
+          path: /var/lib/libvirt/images
+      log_disk:
+          name: app2_logs
+          size: 30
+          path: /var/lib/libvirt/images
+      bridge: 
+          interface: mgmtbr0
+          mac1: 52:54:01:b2:b0:20
+          mac2: 52:54:01:b2:b0:21
+          mac3: 52:54:01:b2:b0:22
+
+    - name: volt2
+      url: http://{{ mirror_base }}/isos/rhel-server-6.6-x86_64-dvd
+      ks: http://{{ kickstart_host }}/kickstartvolt2.cfg
+      description: cdm
+      cpu: 2
+      mem: 2048
+      virt_type: kvm
+      virt_hypervisor: hvm
+      os:
+          type: linux
+          variant: rhel6
+      disk:
+          size: 20
+          path: /var/lib/libvirt/images
+      log_disk:
+          name: volt2data
+          size: 30
+          path: /var/lib/libvirt/images
+      bridge:
+          interface: mgmtbr0
+          mac1: 52:54:01:b2:b0:23
+          mac2: 52:54:01:b2:b0:24
+          mac3: 52:54:01:b2:b0:25
+

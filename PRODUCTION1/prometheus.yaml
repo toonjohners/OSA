@@ -1,0 +1,12 @@
+---
+- hosts: nms
+  sudo: yes
+  roles: 
+    -  role: prometheus
+
+
+- hosts: Production
+  sudo: yes
+  roles:
+    -  role: prometheus_client
+

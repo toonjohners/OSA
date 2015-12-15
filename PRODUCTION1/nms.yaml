@@ -1,0 +1,11 @@
+---
+- hosts: Production
+  sudo: yes
+  roles: 
+    - role: Production
+
+- hosts: nms
+  sudo: yes
+  roles:
+    - role: opennms
+

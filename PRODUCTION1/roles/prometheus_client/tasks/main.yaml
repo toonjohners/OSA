@@ -1,0 +1,5 @@
+---
+############# Local Repos for Build #################
+
+- include: client.yml tags=client
+

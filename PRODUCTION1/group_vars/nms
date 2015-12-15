@@ -1,0 +1,30 @@
+---
+users:
+  - name: omns
+    gecos: OpenNms
+    password: "$6$oUdpYKyBT7HW6wkT$F52V359cnPi0KMjHARBgkRaTmbKXHkomHj4zPTdSNq\
+               jF23k11bLJRJV.C/lR916I64vjlIbnVRd4ulmghr/pb0"
+    forward: openet@openet.com
+
+extra_packages_to_install:
+  - net-snmp-libs
+  - net-snmp-utils
+  - opennms
+  - postgresql 
+  - postgresql-server
+  - 'perl(LWP)' 
+  - 'perl(XML::Twig)'
+
+extra_services_to_enable:
+  - postgresql
+  - opennms
+
+hosts_to_monitor:
+  - 10.0.102.105
+  - 10.0.102.102
+  - 10.0.102.103
+  - 10.0.102.104
+  - 10.0.102.121
+  - 10.0.102.122
+
+prometheus_server: 10.0.102.104

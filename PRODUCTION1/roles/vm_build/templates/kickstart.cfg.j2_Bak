@@ -1,0 +1,128 @@
+# Install OS instead of upgrade
+install
+
+# Use text mode install
+#text
+# Text mode without curses, any need for interaction will stop the install.
+cmdline
+
+# Use network installation.
+# XXX: Adjust for reachable web server.
+cdrom
+
+# System authorization information
+auth  --useshadow  --passalgo=sha512
+
+# Firewall configuration
+firewall --disabled
+
+# Installation logging level
+logging --level=info
+
+# Access the installer from SSH
+sshpw --username=root --plaintext installer
+
+# System bootloader configuration, enable serial port access.
+bootloader --location=mbr --append="vga=normal nomodeset console=tty0 console=ttyS0"
+
+# Clear the Master Boot Record
+zerombr
+
+# Partition clearing information
+clearpart --all --initlabel 
+
+# XXX: Specify which harddrive to use (vda for virtual disks, sda for normal
+# ATA disks.
+ignoredisk --only-use=vda,vdb
+
+# Partition the whole disk with LVM, only create a small root and swap
+# partitions.
+# XXX: Adjust for storage needs.
+part /boot --size=200 --asprimary
+part pv.01 --size=1 --grow --asprimary
+volgroup vg0 pv.01 
+logvol swap --fstype swap --name=swap --vgname=vg0 --recommended
+logvol / --fstype ext4 --name=root --vgname=vg0 --size=4096
+#logvol /srv --fstype ext4 --name=srv --vgname=vg0 --size=51200
+
+part pv.02 --size=1 --grow --asprimary --ondisk=vdb
+volgroup vg1 pv.02
+logvol /logs --fstype ext4 --name=logs --vgname=vg1 --size=25000
+
+
+# Shutdown after installation
+#reboot
+poweroff
+
+# Don't run the Setup Agent on first boot
+firstboot --disable
+
+# System keyboard
+keyboard us
+
+# System language
+lang en_IE
+
+# System timezone
+timezone  Etc/GMT
+
+# SELinux configuration
+selinux --disabled
+
+# Do not configure the X Window System
+skipx
+
+# Network information
+# XXX: Specify correct hostname; optionally a different network interface
+# (defaults to the first detected card).
+#network --bootproto=dhcp --ipv6=auto --activate --hostname=osa_demo.openet-dublin
+network --device {{ item.network.device }} --bootproto=static --ip={{ item.network.ip }} --netmask={{ item.network.netmask }} --gateway={{ item.network.gateway }} --hostname={{ item.network.hostname }}
+network --device {{ item.network.device1 }} --bootproto=static --ip={{ item.network.ip1 }} --netmask={{ item.network.netmask1 }} --gateway={{ item.network.gateway1 }}
+network --device {{ item.network.device2 }} --bootproto=static --ip={{ item.network.ip2 }} --netmask={{ item.network.netmask2 }} --gateway={{ item.network.gateway2 }} 
+
+
+# Create root user without a password.
+rootpw --iscrypted *
+
+# Create user account, with sudo permission. Ansible will use this to set up
+# the rest of the system.
+# XXX: Change user information, and encrypt password with `mkpasswd  -m
+# sha-512`, or copy from /etc/shadow.
+user --groups=wheel --name={{ item.user.name }} --iscrypted --gecos={{ item.user.gecos }} --password={{ item.user.password }}
+
+
+
+# Set up extra repositories to be used during install.
+# XXX: Adjust for reachable web server.
+
+
+# Bare-bones installation: base group, minus many unneeded packages.
+%packages
+@base
+%end
+
+# Post-install script, for any further customisations.
+%post
+
+# Allow wheel group sudo access
+cat >> /etc/sudoers << EOF
+
+### Allow wheel group sudo access ###
+%wheel ALL=(ALL) ALL
+EOF
+
+# Modify sshd_config
+/bin/sed -i 's/#PermitRootLogin yes/PermitRootLogin without-password/' /etc/ssh/sshd_config
+
+# XXX: Add a SSH authorised key to the user created before.
+mkdir -p /home/{{ item.user.name }}/.ssh 
+cat >> /home/{{ item.user.name }}/.ssh/authorized_keys << EOF
+{{ item.user.ssh_key }}
+EOF
+chown -R ansible: /home/{{ item.user.name }}/.ssh
+
+# Remove traces of SElinux.
+rpm -e --nodeps selinux-policy-targeted selinux-policy
+
+
+%end

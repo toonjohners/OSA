@@ -1,0 +1,70 @@
+---
+############# Local Repos for Build #################
+
+- name: configure local repo
+  template:
+    src: epel-openet.repo.j2
+    dest: /etc/yum.repos.d/epel-openet.repo
+
+
+- name: configure local repo
+  template:
+    src: openet-www.repo.j2
+    dest: /etc/yum.repos.d/openet-www.repo
+
+- name: configure local repo
+  template:
+    src: opennms.repo.j2
+    dest: /etc/yum.repos.d/opennms.repo
+
+- name: configure local repo
+  template:
+    src: rhel-extra.repo.j2
+    dest: /etc/yum.repos.d/rhel-extra.repo
+
+- name: configure local repo
+  template:
+    src: sunburnt.repo.j2
+    dest: /etc/yum.repos.d/sunburnt.repo
+
+############# Build OSA VM  #################
+
+- name: Build Kickstart file
+  template:
+    src: kickstart.cfg.j2
+    dest: /var/www/html/kickstart{{ item.name }}.cfg
+  with_items: kickstart_file
+
+
+- name: get list of vms
+  virt: command=list_vms
+  register: virt_vms
+
+- name: create production VMs
+  command: virt-install -n {{item.name}} \
+           -r {{ item.mem }} \
+           --vcpus {{ item.cpu }} \
+           --os-type {{ item.os.type }} \
+           --os-variant {{ item.os.variant }} \
+           --disk size={{item.disk.size}},path={{item.disk.path}}/{{item.name}}.img \
+           --disk size={{item.log_disk.size}},path={{item.disk.path}}/{{item.log_disk.name}}.img \
+           --network bridge={{ item.bridge.interface }},model=virtio,mac={{ item.bridge.mac1 }} \
+           --network bridge={{ item.bridge.interface }},model=virtio,mac={{ item.bridge.mac2 }} \
+           --network bridge={{ item.bridge.interface }},model=virtio,mac={{ item.bridge.mac3 }} \
+           --extra-args="ks={{ item.ks }} ksdevice=eth0 console=tty0 console=ttyS0,115200 inst.sshd"
+           --location '{{ item.url }}' \
+           --nographics \
+           --noautoconsole \
+           --autostart
+  when: item.name not in virt_vms.list_vms
+  with_items: guests
+
+- name: get guest info
+  virt: command=info
+  register: virt_info
+
+- name: make sure all vms are running
+  virt: name={{item.name}} command=start
+  when: virt_info[item.name]['state'] != 'running'
+  with_items: guests
+

@@ -1,0 +1,4 @@
+- hosts: oam:host1:host2
+  sudo: yes
+  roles:
+    - role: vm_build

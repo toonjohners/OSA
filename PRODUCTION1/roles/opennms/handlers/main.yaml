@@ -1,0 +1,7 @@
+---
+- name: restart postgresql
+  service: name=postgresql state=restarted
+
+- name: start opennms
+  service: name=opennms state=started
+

@@ -1,0 +1,29 @@
+---
+############# Local Repos for Build #################
+
+- name: configure local repo
+  template:
+    src: epel-openet.repo.j2
+    dest: /etc/yum.repos.d/epel-openet.repo
+
+
+- name: configure local repo
+  template:
+    src: openet-www.repo.j2
+    dest: /etc/yum.repos.d/openet-www.repo
+
+- name: configure local repo
+  template:
+    src: opennms.repo.j2
+    dest: /etc/yum.repos.d/opennms.repo
+
+- name: configure local repo
+  template:
+    src: rhel-extra.repo.j2
+    dest: /etc/yum.repos.d/rhel-extra.repo
+
+- name: configure local repo
+  template:
+    src: sunburnt.repo.j2
+    dest: /etc/yum.repos.d/sunburnt.repo
+

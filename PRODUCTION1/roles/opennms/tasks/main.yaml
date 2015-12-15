@@ -1,0 +1,54 @@
+---
+- name: configure opennms
+  template:
+    src: opennms.repo.j2
+    dest: /etc/yum.repos.d/opennms.repo
+
+
+- name: install packages
+  yum:
+    name: "{{item}}"
+    state: present
+  with_items: extra_packages_to_install
+
+- stat: path=/opt/opennms/instances/instance.properties
+  register: opennms_installed
+
+- name: initialize the database
+  command: /sbin/service postgresql initdb
+           creates=/var/lib/pgsql/data/postgresql.conf
+  when: opennms_installed.stat.exists == False
+ 
+- name: Upload default pg_hba.conf for postgres
+  copy: src=pg_hba.conf dest=/var/lib/pgsql/data/pg_hba.conf mode=0600
+  notify:
+    - restart postgresql
+  when: opennms_installed.stat.exists == False
+
+- name: Start PostgreSQL and enable at boot
+  service: name=postgresql
+           state=started
+
+- name: Configure Java for OpenNms
+  command: /opt/opennms/bin/runjava -S /usr/java/latest/bin/java
+  when: opennms_installed.stat.exists == False
+
+- name: Install OpenNMS
+  command: /opt/opennms/bin/install -dis
+  notify:
+    - start opennms
+  when: opennms_installed.stat.exists == False
+
+- name: Start OpenNms
+  service: name=opennms
+           state=started
+
+- name: Create Provisioning hosts file
+  file: path=/tmp/hosts.tmp state=touch mode="u=rw,g=r,o=r"
+
+- name: Add Hosts to monitor
+  lineinfile: dest=/tmp/hosts.tmp state=present line='{{item }}'
+  with_items: hosts_to_monitor
+
+- name: Run provsioning script 
+  script: provision.sh

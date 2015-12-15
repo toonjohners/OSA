@@ -1,0 +1,107 @@
+---
+
+### Site Specific Information below this line: ###
+##################################################
+
+mirror_base: 10.0.26.179/mirror
+kickstart_host: 10.0.102.102
+
+
+kickstart_file:
+    - name: nms
+      network:
+           device: eth0
+           ip: 10.0.102.104
+           netmask: 255.255.0.0 
+           gateway: 10.0.0.50
+           hostname: nms
+
+           device1: eth1
+           ip1: 172.0.102.104
+           netmask1: 255.255.0.0
+           gateway1: 10.0.0.50
+
+           device2: eth2
+           ip2: 172.0.2.104
+           netmask2: 255.255.0.0
+           gateway2: 10.0.0.50
+
+      user:
+           name: ansible
+           gecos: Ansible user
+           password: $6$1i0MLI/A$xXsHHTGU2ExrATgrpJN2Jl6X6FEFHne2ra8cEVDcXlp3qcquJdtp9fG69lRAB/eecN9XKtgWjGqWil32WfYtF.
+           ssh_key: ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAx2aoR19VAtCq3SdiG0NCKaUlGcNPHoB2I9y7bFLDVEcRRcMImR886/6khnrdIr9OKG43fzWb9hmtasS5SRhwQau3+pXY/iHKTmS3Lb8DNrfIIkcsQPitcHqlUoX9NwQcDh2iwwlF8xzy0rpPM7sOwo/+qdm6dHPN9PeezBW2EtkZQ5aAHFYAPufleIUU9nYiEPk4gYYe2jZO2Tv0GqOIRn0CQYyd3DLJIOBOX8Tu9WAf0QMGJGKCPU2rjPVW1t3sXayc3t7mlldZJafzHVljqIrYLHmryP6PnGWZonHcEBBG0nYouy6hkls75UAUjl5KwUA7MrtrOKqac+/oq1swZw== ansible@osa_demo.openet-dublin
+
+    - name: cdm
+      network:
+           device: eth0
+           ip: 10.0.102.105
+           netmask: 255.255.0.0
+           gateway: 10.0.0.50
+           hostname: cdm
+
+           device1: eth1
+           ip1: 172.0.102.105
+           netmask1: 255.255.0.0
+           gateway1: 10.0.0.50
+
+           device2: eth2
+           ip2: 172.0.2.105
+           netmask2: 255.255.0.0
+           gateway2: 10.0.0.50
+
+      user:
+           name: ansible
+           gecos: Ansible user
+           password: $6$1i0MLI/A$xXsHHTGU2ExrATgrpJN2Jl6X6FEFHne2ra8cEVDcXlp3qcquJdtp9fG69lRAB/eecN9XKtgWjGqWil32WfYtF.
+           ssh_key: ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAx2aoR19VAtCq3SdiG0NCKaUlGcNPHoB2I9y7bFLDVEcRRcMImR886/6khnrdIr9OKG43fzWb9hmtasS5SRhwQau3+pXY/iHKTmS3Lb8DNrfIIkcsQPitcHqlUoX9NwQcDh2iwwlF8xzy0rpPM7sOwo/+qdm6dHPN9PeezBW2EtkZQ5aAHFYAPufleIUU9nYiEPk4gYYe2jZO2Tv0GqOIRn0CQYyd3DLJIOBOX8Tu9WAf0QMGJGKCPU2rjPVW1t3sXayc3t7mlldZJafzHVljqIrYLHmryP6PnGWZonHcEBBG0nYouy6hkls75UAUjl5KwUA7MrtrOKqac+/oq1swZw== ansible@osa_demo.openet-dublin
+
+guests:
+    - name: nms
+      url: http://{{ mirror_base }}/isos/rhel-server-6.6-x86_64-dvd
+      ks: http://{{ kickstart_host }}/kickstartnms.cfg
+      description: nms
+      cpu: 2
+      mem: 2048
+      virt_type: kvm
+      virt_hypervisor: hvm
+      os:
+          type: linux
+          variant: rhel6
+      disk:
+          size: 20
+          path: /var/lib/libvirt/images
+      log_disk:
+          name: nms_logs
+          size: 30
+          path: /var/lib/libvirt/images
+      bridge: 
+          interface: mgmtbr0
+          mac1: 52:54:01:b2:b0:14
+          mac2: 52:54:01:b2:b0:15
+          mac3: 52:54:01:b2:b0:16
+
+    - name: cdm
+      url: http://{{ mirror_base }}/isos/rhel-server-6.6-x86_64-dvd
+      ks: http://{{ kickstart_host }}/kickstartcdm.cfg
+      description: cdm
+      cpu: 2
+      mem: 2048
+      virt_type: kvm
+      virt_hypervisor: hvm
+      os:
+          type: linux
+          variant: rhel6
+      disk:
+          size: 20
+          path: /var/lib/libvirt/images
+      log_disk:
+          name: fwdata
+          size: 30
+          path: /var/lib/libvirt/images
+      bridge:
+          interface: mgmtbr0
+          mac1: 52:54:02:b2:b0:17
+          mac2: 52:54:02:b2:b0:18
+          mac3: 52:54:02:b2:b0:19
+

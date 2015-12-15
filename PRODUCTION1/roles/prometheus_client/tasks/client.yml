@@ -1,0 +1,15 @@
+---
+
+- name: Install node_exporter
+  yum:
+    name: prometheus-node-exporter
+    state: present
+
+- name: copy node_exporter config to server
+  template: src=node_exporter.j2 dest=/etc/sysconfig/node_exporter
+  notify: 
+    - restart node_exporter
+
+- name: Enable node_exporter
+  service: name=node_exporter enabled=yes
+

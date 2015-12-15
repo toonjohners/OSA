@@ -1,0 +1,26 @@
+---
+
+mirror_base: 10.0.26.179/mirror
+
+
+osa_packages_to_install:
+  - nfs-utils
+  - nfs-utils-lib
+  - net-tools
+  - nc
+  - net-snmp
+  - screen
+  - iperf
+  - collectl
+  - iftop
+  - iptraf
+  - httpd
+
+osa_services_to_enable:
+  - snmpd
+  - ntpd
+
+osa_services_to_disable:
+  - iptables
+
+
